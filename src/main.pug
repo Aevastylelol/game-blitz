@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        meta(http-equiv="X-UA-Compatible", content="ie=edge")
+        link(rel="stylesheet" type="text/css" href="main.css") 
+        title
+    body(onselectstart="return false", onmousedown="return false" oncontextmenu="return false")
+        .app
+            .main-page
+                .title-wrapper
+                    .title Blitz
+                .menu
+                    .menu__item.button__continue.menu__item_off Continue ....
+                    .menu__item.button__new-game New Game
+                    .menu__item.button__settings Settings
+            .sub-window.sub-window_off.play-mods
+                .play-mods__title-wrapper
+                    .play-mods__title
+                .play-mods__items
+                    .play-mods__item
+                        .play-mods__item-title Play on time
+                        .play-mods__item-description 2 minutes.
+                        .play-mods__item-start.button__play-on-time START
+                    .play-mods__item
+                        .play-mods__item-title Free Game
+                        .play-mods__item-description ...
+                        .play-mods__item-start.button__play-on-time SOON
+            .sub-window.sub-window_off.settings
+                .key-bindings
+                    .key-bindings__title-wrapper
+                        .key-bindings__title Key Bindings
+                    .key-bindings__items
+                        .key-bindings__item ESC :: OPEN MENU
+                .sound
+                    .sound__title-wrapper
+                        .sound__title Sound
+                    .sound__items
+                        .sound__item.background-music Background Music
+                        .sound__item.sound-fx Sound FX
+            .info-panel.info-panel_off
+                .info-panel__fst-row
+                    .info-panel__time-wrapper Time: 00:
+                        span.info-panel__time 00
+                    .info-panel__score-wrapper Score: 
+                        span.info-panel__score 0
+                .info-panel__snd-row
+            .game-over.game-over_off
+                .game-over__title-wrapper
+                    .game-over__title YOUR SCORE
+                .game-over__score-wrapper
+                    .game-over__score 650
+            .canvas
+                canvas#canvas
+
+            //- <div class="attribution-block"><a href="http://dig.ccmixter.org/files/airtone/56520">nightWalk</a> by airtone (c) copyright 2017 Licensed under a Creative Commons <a href="http://creativecommons.org/licenses/by-nc/3.0/">Attribution Noncommercial  (3.0)</a> license. </div>
+        script(src="./main.js")

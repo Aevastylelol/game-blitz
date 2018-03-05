@@ -1,0 +1,53 @@
+.play-mods
+    flex-direction: column
+    justify-content: space-around
+    align-items: center
+
+.play-mods__title-wrapper
+    height: 20%
+    width: 100%
+    display: flex
+    justify-content: center
+    align-items: center
+    color: $fst-color
+    font-size: 6vh
+    font-family: 'Encode Sans Expanded'
+
+.play-mods__items
+    height: 75%
+    width: 90%
+    display: flex
+    justify-content: space-around
+    align-items: center
+
+.play-mods__item
+    width: 17%;
+    height: 70%;
+    color: $fst-color
+    transition: box-shadow 200ms, opacity 200ms
+    display: flex
+    flex-direction: column
+    justify-content: space-around
+    align-items: center
+    font-family: 'Open Sans Condensed'
+
+.play-mods__item-title
+    font-size: 3.5vh
+.play-mods__item-description
+    font-size: 2vh
+
+.play-mods__item-start
+    height: 10%
+    width: 35%
+    font-size: 2.5vh
+    color: darken($fst-color, 20%)
+    box-shadow: 0 1px 0 0 darken($fst-color, 50%)
+    display: flex
+    align-items: center
+    justify-content: center
+    transition: box-shadow 200ms, color 200ms
+
+.play-mods__item-start:hover
+    color: $fst-color
+    box-shadow: 0 1px 0 0 $fst-color
+

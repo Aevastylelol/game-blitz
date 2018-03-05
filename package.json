@@ -1,0 +1,29 @@
+{
+  "name": "project",
+  "version": "0.1.0",
+  "author": "Aevastylelol",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/webgl2": "0.0.2",
+    "awesome-typescript-loader": "^3.4.1",
+    "browser-sync": "^2.20.0",
+    "del": "^3.0.0",
+    "fresh": "^0.5.2",
+    "google-closure-compiler-js": "^20170910.0.1",
+    "gulp": "github:gulpjs/gulp#4.0",
+    "gulp-imagemin": "^3.4.0",
+    "gulp-pug": "^3.3.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-stylus": "^2.6.0",
+    "gulp-util": "^3.0.8",
+    "pug": "^2.0.0-rc.4",
+    "stylus": "^0.54.5",
+    "typescript": "^2.6.2",
+    "vinyl-named": "^1.1.0",
+    "webpack": "^3.10.0",
+    "webpack-stream": "^4.0.0"
+  },
+  "scripts": {
+    "demo": "npm i && NODE_ENV=production gulp demo"
+  }
+}
