@@ -164,6 +164,22 @@ class InfoPanel {
     public readonly remove_time_is_low = () => {
         document.querySelector('.info-panel__time-wrapper').classList.remove('info-panel__time_is-low');
     }
+
+    public readonly set_time = (second: number) => {
+        const time = second.toString();
+
+        this.time_element.element.textContent = time.length >= 2 ? time : `0${time}`;
+
+        if (second < 20) {
+            this.add_time_is_low();
+        } else {
+            this.remove_time_is_low();
+        }
+    }
+
+    public readonly set_score = (score: number) => {
+        this.score_element.element.textContent = score.toString()
+    }
 }
 
 class GameOver {
@@ -173,6 +189,10 @@ class GameOver {
     constructor() {
         this.element = new ElementController('.game-over', 'game-over_off');
         this.score_element = new ElementController('.game-over__score', 'none');
+    }
+
+    public readonly set_score = (score: number) => {
+        this.score_element.element.textContent = score.toString();
     }
 }
 
