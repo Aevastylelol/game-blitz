@@ -50,22 +50,12 @@ gulp.task('typescript', () => {
                     exclude: /node_modules/
                 }
             ]
-        },
-        plugins: is_production ? [
-            new webpack_gcc({
-                options: {
-                    languageIn: 'ECMASCRIPT6',
-                    languageOut: 'ECMASCRIPT5',
-                    compilationLevel: 'ADVANCED',
-                    warningLevel: 'QUIET'
-                },
-            })
-        ] : []
+        }
     };
 
     return gulp.src('src/main.ts')
         .pipe(vinyl_named())
-        .pipe(webpack_stream(config, webpack, done))
+        .pipe(webpack_stream(config, null, done))
         .pipe(gulp.dest('dist'));
 });
 
