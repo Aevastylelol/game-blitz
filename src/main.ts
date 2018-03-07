@@ -4,83 +4,70 @@ import { PlayOnTime } from './mods/play_on_time';
 import { UI } from './ui/ui'
 import { BackgroundSound, SoundFX } from './sound/sound';
 
-class GameWindow {
-    public readonly canvas: Canvas;
-    public readonly block_builder: BlockBuilder;
-    public readonly game: Game;
-    public readonly play_on_time: PlayOnTime;
-
-    constructor() {
-        this.canvas = new Canvas('canvas')
-            .set_client_dimensions()
-            .clear_color(0.05, 0.05, 0.05, 1.0)
-            .clear();
-
-        this.block_builder = new BlockBuilder()
-            .with_size(this.canvas.height() / 15)
-            .with_border_size(this.canvas.height() / 23)
-            .with_color(Color.from_u8(247, 220, 111, 1.0))
-            .with_color(Color.from_u8(40, 116, 166, 1.0))
-            .with_color(Color.from_u8(34, 153, 84, 1.0))
-            .with_color(Color.from_u8(231, 76, 60, 1.0))
-            .with_color(Color.from_u8(108, 52, 131, 1.0))
-            .with_swap_transition(250, 'linear')
-            .with_hide_transition(350, 'linear')
-            .with_shift_transition(350, 'linear')
-            .with_select_transition(250, 'linear');
-
-        this.game = new GameBuilder()
-            .with_canvas(this.canvas)
-            .with_dimensions(8, 8)
-            .with_origin(this.canvas.width() / 8, this.canvas.height() / 3)
-            .with_block(this.block_builder.build())
-            .build();
-
-        this.play_on_time = new PlayOnTime(120, this.game);
-    }
-}
-
 const main = () => {
-    const game_window = new GameWindow();
     const ui = UI.instance_of();
     const background_sound = BackgroundSound.instance_of();
     const sound_fx = SoundFX.instance_of();
 
+    const canvas = new Canvas('canvas')
+        .set_client_dimensions()
+        .clear_color(0.05, 0.05, 0.05, 1.0)
+        .clear();
+
+    const block_builder = new BlockBuilder()
+        .with_size(canvas.height() / 15)
+        .with_border_size(canvas.height() / 23)
+        .with_color(Color.from_u8(247, 220, 111, 1.0))
+        .with_color(Color.from_u8(40, 116, 166, 1.0))
+        .with_color(Color.from_u8(34, 153, 84, 1.0))
+        .with_color(Color.from_u8(231, 76, 60, 1.0))
+        .with_color(Color.from_u8(108, 52, 131, 1.0))
+        .with_swap_transition(250, 'linear')
+        .with_hide_transition(350, 'linear')
+        .with_shift_transition(350, 'linear')
+        .with_select_transition(250, 'linear');
+
+    const game = new GameBuilder()
+        .with_canvas(canvas)
+        .with_dimensions(8, 8)
+        .with_origin(canvas.width() / 8, canvas.height() / 3)
+        .with_block(block_builder.build())
+        .build();
+
+    const play_on_time = new PlayOnTime(120, game);
+
     ui.play_mods.buttons.play_on_time.add_event_callback('click', () => {
-        const game = game_window.play_on_time;
-        const game_context = game.context();
-
         background_sound.main_theme.reset().play();
-        ui.info_panel.set_time(game.duration);
+        ui.info_panel.set_time(play_on_time.duration);
 
-        game.set_time_callback(time_left => {
+        play_on_time.set_time_callback(time_left => {
             ui.info_panel.set_time(time_left);
-            ui.info_panel.set_score(game_context.score());
+            ui.info_panel.set_score(game.score());
         });
 
         const handler = (ev: MouseEvent) => {
-            if (game_context.is_selected_block()) {
-                game_context.selected_swap_with(ev);
+            if (game.is_selected_block()) {
+                game.selected_swap_with(ev);
             } else {
-                game_context.select(ev);
+                game.select(ev);
             }
         };
 
-        game.set_game_over_callback(() => {
+        play_on_time.set_game_over_callback(() => {
             background_sound.main_theme.stop();
 
             ui.main_page.buttons.continue.element.off();
             ui.game_over.element.on();
-            ui.game_over.set_score(game_context.score());
-            
-            game_window.canvas.event_target().removeEventListener('click', handler);
+            ui.game_over.set_score(game.score());
 
-            ui.info_panel.set_score(game.game.reset_score());
+            canvas.event_target().removeEventListener('click', handler);
+
+            ui.info_panel.set_score(game.reset_score());
         });
 
-        game_window.canvas.event_target().addEventListener('click', handler);
+        canvas.event_target().addEventListener('click', handler);
 
-        game.start_game();
+        play_on_time.start_game();
     });
 
     ui.settings.background_sound.element.off();

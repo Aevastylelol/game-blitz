@@ -14,10 +14,6 @@ class PlayOnTime {
         setTimeout(this.time_updater, 1000);
     }
 
-    public readonly context = (): Game => {
-        return this.game;
-    }
-
     public readonly set_time_callback = (callbackfn: (time_left: number) => void) => {
         this.time_cb = callbackfn;
     }
