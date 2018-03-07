@@ -1,20 +1,12 @@
-import { Game, GameBuilder } from './../game/mod'
+import { Game } from './../game/mod'
 
 class PlayOnTime {
-    private game: Game;
-
     private time_passed: number;
 
     constructor(
         public duration: number,
-        public game_builder: GameBuilder
+        public game: Game
     ) { }
-
-    public readonly init_game = (): this => {
-        this.game = this.game_builder.build();
-
-        return this;
-    }
 
     public readonly start_game = () => {
         this.time_passed = 0;

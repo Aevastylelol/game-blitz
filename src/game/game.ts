@@ -133,7 +133,11 @@ class Game {
         this.rebuild();
     }
 
-    public score = (): number => {
+    public readonly reset_score = (): number => {
+        return (this.total_score = 0);
+    }
+
+    public readonly score = (): number => {
         return this.total_score;
     }
 
@@ -143,7 +147,7 @@ class Game {
         if (!this.field.contains_block(block.x, block.y)) {
             return;
         }
-        
+
         this.set_selected_block(block);
         this.sequencer.next(this.field_animation.select_block(block.x, block.y));
     }

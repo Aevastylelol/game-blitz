@@ -7,7 +7,7 @@ import { BackgroundSound, SoundFX } from './sound/sound';
 class GameWindow {
     public readonly canvas: Canvas;
     public readonly block_builder: BlockBuilder;
-    public readonly game_builder: GameBuilder;
+    public readonly game: Game;
     public readonly play_on_time: PlayOnTime;
 
     constructor() {
@@ -29,13 +29,14 @@ class GameWindow {
             .with_shift_transition(350, 'linear')
             .with_select_transition(250, 'linear');
 
-        this.game_builder = new GameBuilder()
+        this.game = new GameBuilder()
             .with_canvas(this.canvas)
             .with_dimensions(8, 8)
             .with_origin(this.canvas.width() / 8, this.canvas.height() / 3)
-            .with_block(this.block_builder.build());
+            .with_block(this.block_builder.build())
+            .build();
 
-        this.play_on_time = new PlayOnTime(120, this.game_builder);
+        this.play_on_time = new PlayOnTime(120, this.game);
     }
 }
 
@@ -46,10 +47,11 @@ const main = () => {
     const sound_fx = SoundFX.instance_of();
 
     ui.play_mods.buttons.play_on_time.add_event_callback('click', () => {
-        const game = game_window.play_on_time.init_game();
+        const game = game_window.play_on_time;
         const game_context = game.context();
 
         background_sound.main_theme.reset().play();
+        ui.info_panel.set_time(game.duration);
 
         game.set_time_callback(time_left => {
             ui.info_panel.set_time(time_left);
@@ -67,13 +69,13 @@ const main = () => {
         game.set_game_over_callback(() => {
             background_sound.main_theme.stop();
 
-            game_window.canvas.clear();
-
             ui.main_page.buttons.continue.element.off();
             ui.game_over.element.on();
             ui.game_over.set_score(game_context.score());
-
+            
             game_window.canvas.event_target().removeEventListener('click', handler);
+
+            ui.info_panel.set_score(game.game.reset_score());
         });
 
         game_window.canvas.event_target().addEventListener('click', handler);
