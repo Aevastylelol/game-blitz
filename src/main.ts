@@ -22,10 +22,10 @@ const main = () => {
         .with_color(Color.from_u8(34, 153, 84, 1.0))
         .with_color(Color.from_u8(231, 76, 60, 1.0))
         .with_color(Color.from_u8(108, 52, 131, 1.0))
-        .with_swap_transition(250, 'linear')
-        .with_hide_transition(350, 'linear')
-        .with_shift_transition(350, 'linear')
-        .with_select_transition(250, 'linear');
+        .with_swap_transition(150, 'linear')
+        .with_hide_transition(225, 'linear')
+        .with_shift_transition(275, 'linear')
+        .with_select_transition(150, 'linear');
 
     const game = new GameBuilder()
         .with_canvas(canvas)
