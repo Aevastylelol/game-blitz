@@ -1,26 +1,37 @@
 import { SequenceCallback } from './../core/sequencer';
 
-type TransitionFunction = (length: number, step_callbackfn: (step: number) => void) => SequenceCallback;
+type TransitionFunction = (delta: number, step_callbackfn: (step: number) => void) => SequenceCallback;
 
 class Transition {
-    private readonly count: number;
+    public readonly duration: number;
 
     constructor(duration: number) {
-        this.count = ((duration / (1000 / 30)) | 0) || 1;
+        this.duration = duration;
     }
 
-    public readonly linear = (delta: number, step_callbackfn: (step: number) => void): SequenceCallback => (done: () => void = () => { }) => {
-        const step = delta / this.count;
+    public readonly linear = (delta: number, callbackfn: (step: number) => void): SequenceCallback => (done: () => void = () => { }) => {
+        const start_time = Date.now();
 
-        let i = 0;
+        let last = 0;
+        let now = 0;
 
         const loop = () => {
-            step_callbackfn(step);
+            const time_passed = Date.now() - start_time;
 
-            if (++i === this.count) {
-                done();
+            if (time_passed < this.duration) {
+                now = time_passed / this.duration * delta;
+
+                callbackfn(now - last);
+
+                last = now;
+
+                window.requestAnimationFrame(loop)
             } else {
-                window.requestAnimationFrame(loop);
+                now = delta;
+
+                callbackfn(now - last);
+
+                done();
             }
         };
 
