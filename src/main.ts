@@ -4,97 +4,124 @@ import { PlayOnTime } from './mods/play_on_time';
 import { UI } from './ui/ui'
 import { BackgroundSound, SoundFX } from './sound/sound';
 
-const main = () => {
-    const ui = UI.instance_of();
-    const background_sound = BackgroundSound.instance_of();
-    const sound_fx = SoundFX.instance_of();
+class App {
+    private static instance: App;
 
-    const canvas = new Canvas('canvas')
-        .set_client_dimensions()
-        .clear_color(0.05, 0.05, 0.05, 1.0)
-        .clear();
+    private readonly ui: UI;
+    private readonly background_sound: BackgroundSound;
+    private readonly sound_fx: SoundFX;
 
-    const block_builder = new BlockBuilder()
-        .with_size(canvas.height() / 15)
-        .with_border_size(canvas.height() / 23)
-        .with_color(Color.from_u8(247, 220, 111, 1.0))
-        .with_color(Color.from_u8(40, 116, 166, 1.0))
-        .with_color(Color.from_u8(34, 153, 84, 1.0))
-        .with_color(Color.from_u8(231, 76, 60, 1.0))
-        .with_color(Color.from_u8(108, 52, 131, 1.0))
-        .with_swap_transition(150, 'linear')
-        .with_hide_transition(225, 'linear')
-        .with_shift_transition(275, 'linear')
-        .with_select_transition(150, 'linear');
+    private readonly canvas: Canvas;
+    private readonly game: Game;
 
-    const game = new GameBuilder()
-        .with_canvas(canvas)
-        .with_dimensions(8, 8)
-        .with_origin(canvas.width() / 8, canvas.height() / 3)
-        .with_block(block_builder.build())
-        .build();
+    private readonly play_on_time: PlayOnTime;
 
-    const play_on_time = new PlayOnTime(120, game);
+    private constructor() {
+        this.ui = UI.instance_of();
+        this.background_sound = BackgroundSound.instance_of()
+        this.sound_fx = SoundFX.instance_of();
 
-    ui.play_mods.buttons.play_on_time.add_event_callback('click', () => {
-        background_sound.main_theme.reset().play();
-        ui.info_panel.set_time(play_on_time.duration);
+        this.canvas = new Canvas('canvas')
+            .set_client_dimensions()
+            .clear_color(0.05, 0.05, 0.05, 1.0)
+            .clear();
 
-        play_on_time.set_time_callback(time_left => {
-            ui.info_panel.set_time(time_left);
-            ui.info_panel.set_score(game.score());
-        });
+        const block = new BlockBuilder()
+            .with_size(this.canvas.height() / 15)
+            .with_border_size(this.canvas.height() / 23)
+            .with_color(Color.from_u8(247, 220, 111, 1.0))
+            .with_color(Color.from_u8(40, 116, 166, 1.0))
+            .with_color(Color.from_u8(34, 153, 84, 1.0))
+            .with_color(Color.from_u8(231, 76, 60, 1.0))
+            .with_color(Color.from_u8(108, 52, 131, 1.0))
+            .with_swap_transition(150, 'linear')
+            .with_hide_transition(225, 'linear')
+            .with_shift_transition(275, 'linear')
+            .with_select_transition(150, 'linear')
+            .build();
 
-        const handler = (ev: MouseEvent) => {
-            if (game.is_selected_block()) {
-                game.selected_swap_with(ev);
+        this.game = new GameBuilder()
+            .with_canvas(this.canvas)
+            .with_dimensions(8, 8)
+            .with_origin(this.canvas.width() / 8, this.canvas.height() / 3)
+            .with_block(block)
+            .build();
+
+        this.play_on_time = new PlayOnTime(120, this.game);
+
+        this.init_sound();
+        this.init_play_on_time();
+    }
+
+    public static readonly initialize = () => {
+        if (App.instance === void 0) {
+            App.instance = new App();
+        }
+    }
+
+    private readonly init_sound = () => {
+        this.ui.settings.background_sound.element.off();
+
+        const background_sound_callback = (ev?: MouseEvent) => {
+            if (this.ui.settings.background_sound.element.is_off()) {
+                this.background_sound.main_theme.off();
             } else {
-                game.select(ev);
+                this.background_sound.main_theme.on();
             }
         };
 
-        play_on_time.set_game_over_callback(() => {
-            background_sound.main_theme.stop();
+        background_sound_callback();
+        this.ui.settings.background_sound.button.add_event_callback('click', background_sound_callback);
 
-            ui.main_page.buttons.continue.element.off();
-            ui.game_over.element.on();
-            ui.game_over.set_score(game.score());
+        const sound_fx_callback = (ev?: MouseEvent) => {
+            if (this.ui.settings.sound_fx.element.is_off()) {
+                this.sound_fx.hide.off();
+                this.sound_fx.shift.off();
+            } else {
+                this.sound_fx.hide.on();
+                this.sound_fx.shift.on();
+            }
+        };
 
-            canvas.event_target().removeEventListener('click', handler);
+        sound_fx_callback();
+        this.ui.settings.sound_fx.button.add_event_callback('click', sound_fx_callback);
+    }
 
-            ui.info_panel.set_score(game.reset_score());
+    private readonly init_play_on_time = () => {
+        this.ui.play_mods.buttons.play_on_time.add_event_callback('click', () => {
+            this.background_sound.main_theme.reset().play();
+            this.ui.info_panel.set_time(this.play_on_time.duration);
+
+            this.play_on_time.set_time_callback(time_left => {
+                this.ui.info_panel.set_time(time_left);
+                this.ui.info_panel.set_score(this.game.score());
+            });
+
+            const handler = (ev: MouseEvent) => {
+                if (this.game.is_selected_block()) {
+                    this.game.selected_swap_with(ev);
+                } else {
+                    this.game.select(ev);
+                }
+            };
+
+            this.play_on_time.set_game_over_callback(() => {
+                this.background_sound.main_theme.stop();
+
+                this.ui.main_page.buttons.continue.element.off();
+                this.ui.game_over.element.on();
+                this.ui.game_over.set_score(this.game.score());
+
+                this.canvas.event_target().removeEventListener('click', handler);
+
+                this.ui.info_panel.set_score(this.game.reset_score());
+            });
+
+            this.canvas.event_target().addEventListener('click', handler);
+
+            this.play_on_time.start_game();
         });
-
-        canvas.event_target().addEventListener('click', handler);
-
-        play_on_time.start_game();
-    });
-
-    ui.settings.background_sound.element.off();
-
-    const background_sound_callback = (ev?: MouseEvent) => {
-        if (ui.settings.background_sound.element.is_off()) {
-            background_sound.main_theme.off();
-        } else {
-            background_sound.main_theme.on();
-        }
     };
+}
 
-    background_sound_callback();
-    ui.settings.background_sound.button.add_event_callback('click', background_sound_callback);
-
-    const sound_fx_callback = (ev?: MouseEvent) => {
-        if (ui.settings.sound_fx.element.is_off()) {
-            sound_fx.hide.off();
-            sound_fx.shift.off();
-        } else {
-            sound_fx.hide.on();
-            sound_fx.shift.on();
-        }
-    };
-
-    sound_fx_callback();
-    ui.settings.sound_fx.button.add_event_callback('click', sound_fx_callback)
-};
-
-window.addEventListener('load', main);
+window.addEventListener('load', App.initialize);
