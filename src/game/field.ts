@@ -93,8 +93,8 @@ class Field {
         this.blocks[b_block_id] = t;
     }
 
-    public readonly remove_from_columns = (hash_blocks: Iterable<number>)
-        : {
+    public readonly remove_from_columns = (hash_blocks: Iterable<number>):
+        {
             shift_sub_columns: Array<{ start: number, end: number, offset: number }>,
             new_colors: Uint32Array;
         } => {
