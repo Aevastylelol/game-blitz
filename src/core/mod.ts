@@ -1,3 +1,3 @@
 export * from './canvas';
-export * from './sequencer';
+export * from './thread';
 export * from './webgl/mod';

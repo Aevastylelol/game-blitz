@@ -1,5 +1,5 @@
 import { Block, BlockBuilder } from './block';
-import { Canvas, Sequencer, Series, Parallel, SequenceCallback } from './../core/mod';
+import { Canvas, Thread, Series, Parallel, SequenceCallback } from './../core/mod';
 import { Field } from './field';
 import { FieldRenderer } from './field_renderer';
 import { FieldAnimation } from './field_animation';
@@ -90,7 +90,7 @@ class ScoreCounter {
 }
 
 class Game {
-    private readonly sequencer: Sequencer;
+    private readonly thread: Thread;
     private total_score: number = 0;
     private selected_block: { x: number, y: number };
 
@@ -99,7 +99,7 @@ class Game {
         private readonly field_renderer: FieldRenderer,
         public readonly field_animation: FieldAnimation,
     ) {
-        this.sequencer = new Sequencer();
+        this.thread = new Thread();
 
         const renderer_width = this.field_renderer.grid.x_unit * this.field.block.padding * this.field.block.size;
         const renderer_height = this.field_renderer.grid.y_unit * this.field.block.padding * this.field.block.size;
@@ -149,7 +149,7 @@ class Game {
         }
 
         this.set_selected_block(block);
-        this.sequencer.next(this.field_animation.select_block(block.x, block.y));
+        this.thread.next(this.field_animation.select_block(block.x, block.y));
     }
 
     public readonly selected_swap_with = (pos: { x: number, y: number }) => {
@@ -188,7 +188,7 @@ class Game {
             series.with(this.field_animation.select_block(block.x, block.y));
         }
 
-        this.sequencer.next(series.run);
+        this.thread.next(series.run);
     }
 
     public readonly is_selected_block = (): boolean => {

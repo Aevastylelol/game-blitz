@@ -51,7 +51,7 @@ class Series {
     }
 }
 
-class Sequencer {
+class Thread {
     private readonly queue: SequenceCallback[];
 
     constructor() {
@@ -77,4 +77,4 @@ class Sequencer {
     }
 }
 
-export { Sequencer, Series, Parallel, SequenceCallback };
+export { Thread, Series, Parallel, SequenceCallback };
