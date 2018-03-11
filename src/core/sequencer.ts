@@ -1,6 +1,32 @@
 type SequenceCallback = (done?: () => void) => void;
 
-class Sequence {
+class Parallel {
+    private readonly callbacks: SequenceCallback[];
+
+    constructor() {
+        this.callbacks = [];
+    }
+
+    public readonly with = (callback: SequenceCallback): this => {
+        this.callbacks.push(callback);
+
+        return this;
+    }
+
+    public readonly run = (done: () => void = () => { }) => {
+        let i = 0;
+
+        const check = () => {
+            if (++i === this.callbacks.length) {
+                done();
+            }
+        };
+
+        for (const cb of this.callbacks) cb(check);
+    }
+}
+
+class Series {
     private readonly queue: SequenceCallback[]
 
     constructor() {
@@ -13,7 +39,7 @@ class Sequence {
         return this;
     }
 
-    public readonly run = (done: () => void) => {
+    public readonly run = (done: () => void = () => { }) => {
         this.with(done);
         this.done();
     }
@@ -51,4 +77,4 @@ class Sequencer {
     }
 }
 
-export { Sequencer, Sequence, SequenceCallback };
+export { Sequencer, Series, Parallel, SequenceCallback };
