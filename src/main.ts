@@ -1,8 +1,8 @@
-import { Canvas } from './core/mod';
+import { BackgroundSound, SoundFX } from './sound/sound';
 import { BlockBuilder, Color, Game, GameBuilder } from './game/mod';
+import { Canvas } from './core/mod';
 import { PlayOnTime } from './mods/play_on_time';
 import { UI } from './ui/ui'
-import { BackgroundSound, SoundFX } from './sound/sound';
 
 class App {
     private static instance: App;
@@ -35,8 +35,8 @@ class App {
             .with_color(Color.from_u8(231, 76, 60, 1.0))
             .with_color(Color.from_u8(108, 52, 131, 1.0))
             .with_swap_transition(150, 'linear')
-            .with_hide_transition(225, 'linear')
-            .with_shift_transition(275, 'linear')
+            .with_hide_transition(225, 'accelerated')
+            .with_shift_transition(300, 'accelerated')
             .with_select_transition(150, 'linear')
             .build();
 

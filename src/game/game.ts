@@ -1,9 +1,9 @@
 import { Block, BlockBuilder } from './block';
+import { Canvas, Sequencer, Series, Parallel, SequenceCallback } from './../core/mod';
 import { Field } from './field';
 import { FieldRenderer } from './field_renderer';
 import { FieldAnimation } from './field_animation';
 import { Remover } from './remover';
-import { Canvas, Sequencer, Sequence, SequenceCallback } from './../core/mod';
 import { SoundFX } from './../sound/sound'
 
 class GameBuilder {
@@ -153,7 +153,7 @@ class Game {
     }
 
     public readonly selected_swap_with = (pos: { x: number, y: number }) => {
-        const sequence = new Sequence();
+        const series = new Series();
 
         const block = this.field.grid.block_from(pos);
 
@@ -173,22 +173,22 @@ class Game {
             delta_y === 1 && delta_x === 0 || delta_y === -1 && delta_x === 0
         ) {
             if (delta_x !== 0) {
-                swapped = this.swap_x(selected_block, block, sequence);
+                swapped = this.swap_x(selected_block, block, series);
             } else {
-                swapped = this.swap_y(selected_block, block, sequence);
+                swapped = this.swap_y(selected_block, block, series);
             }
         }
 
         if (swapped) {
-            sequence
+            series
                 .with(this.balance())
                 .with(this.rebuild());
         } else {
             this.set_selected_block(block);
-            sequence.with(this.field_animation.select_block(block.x, block.y));
+            series.with(this.field_animation.select_block(block.x, block.y));
         }
 
-        this.sequencer.next(sequence.run);
+        this.sequencer.next(series.run);
     }
 
     public readonly is_selected_block = (): boolean => {
@@ -208,22 +208,22 @@ class Game {
     }
 
     private readonly rebuild = (): SequenceCallback => {
-        const sequence = new Sequence();
+        const series = new Series();
 
         while (!this.field.playable()) {
             const remover = new Remover(this.field.block);
 
             this.field.for_each((x, y, _) => remover.add(x, y));
 
-            sequence.with(this.remove_with_animation(remover));
+            series.with(this.remove_with_animation(remover));
         }
 
-        return sequence.run;
+        return series.run;
     }
 
     private readonly balance = () => {
         const score_counter = new ScoreCounter();
-        const sequence = new Sequence();
+        const series = new Series();
 
         while (true) {
             const remover = new Remover(this.field.block);
@@ -260,7 +260,7 @@ class Game {
             });
 
             if (!remover.empty()) {
-                sequence.with(this.remove_with_animation(remover));
+                series.with(this.remove_with_animation(remover));
                 score_counter.add(remover);
             } else {
                 this.total_score += score_counter.count();
@@ -269,58 +269,46 @@ class Game {
             }
         }
 
-        return sequence.run;
+        return series.run;
     }
 
     private readonly remove_with_animation = (remover: Remover) => {
-        const sequence = new Sequence();
+        const series = new Series();
 
-        const hide_animation_cb = [] as SequenceCallback[];
-        const remove_animation_cb = [] as SequenceCallback[];
+        const hide_parallel = new Parallel();
+        const remove_parallel = new Parallel();
 
         for (const [col, hash_blocks] of remover.columns().entries()) {
             const { shift_sub_columns, new_colors } = this.field.remove_from_columns(hash_blocks.values());
 
-            remove_animation_cb.push(this.field_animation.remove_from_column(col, shift_sub_columns, new_colors));
+            remove_parallel.with(this.field_animation.remove_from_column(col, shift_sub_columns, new_colors));
 
             for (const hash of hash_blocks.values()) {
                 const { x, y } = this.field.block.from(hash);
 
-                hide_animation_cb.push(this.field_animation.hide_block(x, y));
+                hide_parallel.with(this.field_animation.hide_block(x, y));
             }
         }
 
-        sequence
+        series
             .with(done => {
                 SoundFX.instance_of().hide.reset().play();
                 done();
             })
-            .with(done => {
-                const last_cb = hide_animation_cb.pop();
-
-                for (const cb of hide_animation_cb) cb();
-
-                last_cb(done);
-            })
-            .with(done => {
-                const last_cb = remove_animation_cb.pop();
-
-                for (const cb of remove_animation_cb) cb();
-
-                last_cb(done);
-            })
+            .with(hide_parallel.run)
+            .with(remove_parallel.run)
             .with(done => {
                 SoundFX.instance_of().shift.reset().play();
                 done();
             });
 
-        return sequence.run;
+        return series.run;
     }
 
     private swap_x = (
         a_block: { x: number, y: number },
         b_block: { x: number, y: number },
-        sequence: Sequence,
+        series: Series,
     ): boolean => {
         const x_swap = this.field.x_swap_for(a_block, b_block);
 
@@ -377,7 +365,7 @@ class Game {
 
         this.total_score += new ScoreCounter().add(remover).count();
 
-        sequence
+        series
             .with(this.field_animation.swap_blocks(0, left_block, right_block))
             .with(this.remove_with_animation(remover));
 
@@ -387,7 +375,7 @@ class Game {
     private swap_y = (
         a_block: { x: number, y: number },
         b_block: { x: number, y: number },
-        sequence: Sequence,
+        series: Series,
     ): boolean => {
         const y_swap = this.field.y_swap_for(a_block, b_block);
 
@@ -442,7 +430,7 @@ class Game {
 
         this.total_score += new ScoreCounter().add(remover).count();
 
-        sequence
+        series
             .with(this.field_animation.swap_blocks(1, top_block, bottom_block))
             .with(this.remove_with_animation(remover));
 

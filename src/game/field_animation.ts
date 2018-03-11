@@ -1,9 +1,9 @@
+import { BackgroundSound, SoundFX } from './../sound/sound';
 import { Color } from './color';
 import { Field } from './field';
 import { FieldRenderer } from './field_renderer';
-import { SequenceCallback } from './../core/mod';
+import { Parallel, SequenceCallback } from './../core/mod';
 
-import { BackgroundSound, SoundFX } from './../sound/sound';
 
 class FieldAnimation {
     public readonly field: Field;
@@ -313,7 +313,9 @@ class FieldAnimation {
         const left_limit = renderer_x;
         const right_limit = renderer_x + renderer.grid.x_unit * this.field.block.size;
 
-        const transition_cbs = shift_sub_columns.map((col, i) => {
+        const transition_parallel = new Parallel();
+
+        shift_sub_columns.forEach((col, i) => {
             const start_offset = start_col_offset + (i + 1 !== shift_sub_columns.length ?
                 renderer.get_buffer_offset(col.start + col.offset) : 0);
             const end_offset = start_col_offset + renderer.get_buffer_offset(col.end + col.offset);
@@ -356,14 +358,10 @@ class FieldAnimation {
 
             const delta = col.offset * this.field.block.size * renderer.grid.y_unit;
 
-            return this.field.block.shift_transition(delta, step_cb);
+            transition_parallel.with(this.field.block.shift_transition(delta, step_cb));
         });
 
-        const last = transition_cbs.pop();
-
-        transition_cbs.forEach(cb => cb());
-
-        last(done);
+        transition_parallel.run(done);
     }
 }
 

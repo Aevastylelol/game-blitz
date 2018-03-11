@@ -1,7 +1,7 @@
 import { Block, BlockTransform, BlockScale } from './shaders/mod';
+import { Canvas, Program } from './../core/mod';
 import { Color } from './color';
 import { Field } from './field';
-import { Canvas, Program } from './../core/mod';
 
 class RendererGrid {
     constructor(
