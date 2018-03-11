@@ -1,5 +1,5 @@
 import { Block, BlockBuilder } from './block';
-import { Canvas, Thread, Series, Parallel, SequenceCallback } from './../core/mod';
+import { Canvas, Thread, Series, Parallel, ThreadCallback } from './../core/mod';
 import { Field } from './field';
 import { FieldRenderer } from './field_renderer';
 import { FieldAnimation } from './field_animation';
@@ -207,7 +207,7 @@ class Game {
         return block;
     }
 
-    private readonly rebuild = (): SequenceCallback => {
+    private readonly rebuild = (): ThreadCallback => {
         const series = new Series();
 
         while (!this.field.playable()) {

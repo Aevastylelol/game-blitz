@@ -1,13 +1,13 @@
-type SequenceCallback = (done?: () => void) => void;
+type ThreadCallback = (done?: () => void) => void;
 
 class Parallel {
-    private readonly callbacks: SequenceCallback[];
+    private readonly callbacks: ThreadCallback[];
 
     constructor() {
         this.callbacks = [];
     }
 
-    public readonly with = (callback: SequenceCallback): this => {
+    public readonly with = (callback: ThreadCallback): this => {
         this.callbacks.push(callback);
 
         return this;
@@ -27,13 +27,13 @@ class Parallel {
 }
 
 class Series {
-    private readonly queue: SequenceCallback[]
+    private readonly queue: ThreadCallback[]
 
     constructor() {
         this.queue = [];
     }
 
-    public readonly with = (callback: SequenceCallback): this => {
+    public readonly with = (callback: ThreadCallback): this => {
         this.queue.push(callback);
 
         return this;
@@ -52,13 +52,13 @@ class Series {
 }
 
 class Thread {
-    private readonly queue: SequenceCallback[];
+    private readonly queue: ThreadCallback[];
 
     constructor() {
         this.queue = [];
     }
 
-    public readonly next = (callback: SequenceCallback): this => {
+    public readonly next = (callback: ThreadCallback): this => {
         this.queue.push(callback);
 
         if (this.queue.length === 1) {
@@ -77,4 +77,4 @@ class Thread {
     }
 }
 
-export { Thread, Series, Parallel, SequenceCallback };
+export { Thread, Series, Parallel, ThreadCallback };

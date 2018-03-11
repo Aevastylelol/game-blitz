@@ -2,7 +2,7 @@ import { BackgroundSound, SoundFX } from './../sound/sound';
 import { Color } from './color';
 import { Field } from './field';
 import { FieldRenderer } from './field_renderer';
-import { Parallel, SequenceCallback } from './../core/mod';
+import { Parallel, ThreadCallback } from './../core/mod';
 
 
 class FieldAnimation {
@@ -31,7 +31,7 @@ class FieldAnimation {
         this.renderer.program_main.unbind();
     }
 
-    public readonly select_block = (x: number, y: number): SequenceCallback => (done: () => void) => {
+    public readonly select_block = (x: number, y: number): ThreadCallback => (done: () => void) => {
         const renderer = this.renderer;
         const gl = this.renderer.gl;
 
@@ -155,7 +155,7 @@ class FieldAnimation {
         this.field.block.select_transition(1, step_cb)(done);
     }
 
-    public readonly hide_block = (x: number, y: number): SequenceCallback => (done: () => void) => {
+    public readonly hide_block = (x: number, y: number): ThreadCallback => (done: () => void) => {
         const src_offset = this.renderer.get_buffer_offset(this.field.id_from(x, y));
 
         const gl = this.renderer.gl;
@@ -207,7 +207,7 @@ class FieldAnimation {
         axis: 0 | 1,
         fst_block: { x: number, y: number },
         snd_block: { x: number, y: number }
-    ): SequenceCallback => (done: () => void) => {
+    ): ThreadCallback => (done: () => void) => {
         const fst_block_id = this.field.id_from(fst_block.x, fst_block.y);
         const snd_block_id = this.field.id_from(snd_block.x, snd_block.y);
 
@@ -271,7 +271,7 @@ class FieldAnimation {
         column: number,
         shift_sub_columns: Array<{ start: number, end: number, offset: number }>,
         new_colors: Uint32Array
-    ): SequenceCallback => (done: () => void) => {
+    ): ThreadCallback => (done: () => void) => {
         const renderer = this.renderer;
 
         const start_col = this.field.start_col_id(column);

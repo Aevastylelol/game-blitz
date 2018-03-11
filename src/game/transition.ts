@@ -1,6 +1,6 @@
-import { SequenceCallback } from './../core/mod';
+import { ThreadCallback } from './../core/mod';
 
-type TransitionFunction = (delta: number, step_callbackfn: (step: number) => void) => SequenceCallback;
+type TransitionFunction = (delta: number, step_callbackfn: (step: number) => void) => ThreadCallback;
 
 class Transition {
     public readonly duration: number;
@@ -9,7 +9,7 @@ class Transition {
         this.duration = duration;
     }
 
-    public readonly linear = (delta: number, callbackfn: (step: number) => void): SequenceCallback => (done: () => void = () => { }) => {
+    public readonly linear = (delta: number, callbackfn: (step: number) => void): ThreadCallback => (done: () => void = () => { }) => {
         const start_time = Date.now();
 
         let last = 0;
@@ -38,7 +38,7 @@ class Transition {
         window.requestAnimationFrame(loop);
     }
 
-    public readonly accelerated = (delta: number, callbackfn: (step: number) => void): SequenceCallback => (done: () => void = () => { }) => {
+    public readonly accelerated = (delta: number, callbackfn: (step: number) => void): ThreadCallback => (done: () => void = () => { }) => {
         const a = delta / (this.duration ** 2);
 
         const start_time = Date.now();
