@@ -45,19 +45,19 @@ class BlockBuilder {
         return this;
     }
 
-    public readonly with_hide_transition = (duration: number, timing_fn: 'linear'): this => {
+    public readonly with_hide_transition = (duration: number, timing_fn: 'linear' | 'accelerated'): this => {
         this.hide_transition = new Transition(duration)[timing_fn];
 
         return this
     }
 
-    public readonly with_shift_transition = (duration: number, timing_fn: 'linear'): this => {
+    public readonly with_shift_transition = (duration: number, timing_fn: 'linear' | 'accelerated'): this => {
         this.shift_transition = new Transition(duration)[timing_fn];
 
         return this;
     }
 
-    public readonly with_select_transition = (duration: number, timing_fn: 'linear'): this => {
+    public readonly with_select_transition = (duration: number, timing_fn: 'linear' | 'accelerated'): this => {
         this.select_transition = new Transition(duration)[timing_fn];
 
         return this;
