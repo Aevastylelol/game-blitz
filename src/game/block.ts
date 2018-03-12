@@ -48,7 +48,7 @@ class BlockBuilder {
     public readonly with_hide_transition = (duration: number, timing_fn: 'linear' | 'accelerated'): this => {
         this.hide_transition = new Transition(duration)[timing_fn];
 
-        return this
+        return this;
     }
 
     public readonly with_shift_transition = (duration: number, timing_fn: 'linear' | 'accelerated'): this => {
@@ -74,7 +74,7 @@ class BlockBuilder {
             this.shift_transition,
             this.select_transition
         );
-    };
+    }
 }
 
 class Block {
@@ -89,7 +89,7 @@ class Block {
         public readonly swap_transition: TransitionFunction,
         public readonly hide_transition: TransitionFunction,
         public readonly shift_transition: TransitionFunction,
-        public readonly select_transition: TransitionFunction,
+        public readonly select_transition: TransitionFunction
     ) {
         this.hash = new Uint32Array(1);
         this.block = new Uint16Array(this.hash.buffer);
@@ -109,4 +109,4 @@ class Block {
     }
 }
 
-export { Block, BlockBuilder }
+export { Block, BlockBuilder };
