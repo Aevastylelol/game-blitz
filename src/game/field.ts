@@ -71,13 +71,13 @@ class Field {
                 if (this.x_swap_for({ x, y }, block).swappable) {
                     return true;
                 }
-            };
+            }
 
             for (const block of y_neigs) {
                 if (this.y_swap_for({ x, y }, block).swappable) {
                     return true;
                 }
-            };
+            }
         }
 
         return false;
@@ -140,7 +140,7 @@ class Field {
     }
 
     public readonly contains_block = (x: number, y: number): boolean => {
-        return x < this.width && y < this.height;
+        return x >= 0 && x < this.width && y >= 0 && y < this.height;
     }
 
     public readonly count_left = (x: number, y: number, color: number): number => {
