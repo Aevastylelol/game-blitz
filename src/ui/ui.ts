@@ -166,9 +166,10 @@ class InfoPanel {
     }
 
     public readonly set_time = (second: number) => {
-        const time = second.toString();
+        const min = second / 60 | 0;
+        const sec = second - min * 60;
 
-        this.time_element.element.textContent = time.length >= 2 ? time : `0${time}`;
+        this.time_element.element.textContent = `${min >= 10 ? min : `0${min}`}:${sec >= 10 ? sec : `0${sec}`}`;
 
         if (second < 20) {
             this.add_time_is_low();
