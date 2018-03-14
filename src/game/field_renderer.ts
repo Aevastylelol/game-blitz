@@ -93,7 +93,7 @@ class FieldRenderer {
             const vao = this.arrays[i];
 
             gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
-            gl.bufferData(gl.ARRAY_BUFFER, this.buffer_size * 4, gl.DYNAMIC_DRAW);
+            gl.bufferData(gl.ARRAY_BUFFER, this.buffer_size * 4, gl.DYNAMIC_READ);
             gl.bindVertexArray(vao);
             gl.vertexAttribPointer(0, 3, gl.FLOAT, false, this.vertex_size * 4, 0);
             gl.vertexAttribPointer(1, 4, gl.FLOAT, false, this.vertex_size * 4, 3 * 4);
