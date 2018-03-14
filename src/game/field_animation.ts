@@ -46,7 +46,7 @@ class FieldAnimation {
         const renderer_border_height = renderer_block_height * 2;
         const renderer_border_size_width = renderer_block_width / 6;
         const renderer_border_size_height = renderer_block_height / 6;
-
+        
         gl.bindBuffer(gl.ARRAY_BUFFER, renderer.buffers[0]);
         gl.getBufferSubData(gl.ARRAY_BUFFER, renderer.get_buffer_offset(this.field.id_from(x, y)), renderer.sprites[0]);
         gl.bindBuffer(gl.ARRAY_BUFFER, null);
