@@ -28,7 +28,7 @@ class App {
 
         const block = new BlockBuilder()
             .with_size(this.canvas.height() / 15)
-            .with_border_size(this.canvas.height() / 23)
+            .with_border_size(this.canvas.height() / 23.5)
             .with_color(Color.from_u8(247, 220, 111, 1.0))
             .with_color(Color.from_u8(40, 116, 166, 1.0))
             .with_color(Color.from_u8(34, 153, 84, 1.0))
