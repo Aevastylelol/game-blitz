@@ -3,21 +3,28 @@ import { Block } from './block';
 class FieldGrid {
     public readonly x_origin: number;
     public readonly y_origin: number;
-    public readonly block_size: number;
+    public readonly block: Block;
 
-    constructor(x_origin: number, y_origin: number, block_size: number) {
+    constructor(x_origin: number, y_origin: number, block: Block) {
         this.x_origin = x_origin;
         this.y_origin = y_origin;
-        this.block_size = block_size;
+        this.block = block;
     }
 
-    public readonly block_from = (pos: { x: number, y: number }): Readonly<{ x: number, y: number }> => {
-        const block = {
-            x: ((pos.x - this.x_origin) / this.block_size) | 0,
-            y: ((pos.y - this.y_origin) / this.block_size) | 0,
+    public readonly cell_from = (pos: { x: number, y: number }): Readonly<{ x: number, y: number }> => {
+        const cell = {
+            x: ((pos.x - this.x_origin) / this.block.size) | 0,
+            y: ((pos.y - this.y_origin) / this.block.size) | 0,
         };
 
-        return block;
+        return cell;
+    }
+
+    public readonly is_block = (pos: { x: number, y: number }, cell: Readonly<{ x: number, y: number }>): boolean => {
+        return (
+            (pos.x - (cell.x * this.block.size + this.x_origin)) <= (this.block.size * this.block.padding) &&
+            (pos.y - (cell.y * this.block.size + this.y_origin)) <= (this.block.size * this.block.padding)
+        )
     }
 }
 
@@ -34,7 +41,7 @@ class Field {
     private readonly blocks: Uint32Array;
 
     constructor(x_origin: number, y_origin: number, width: number, height: number, block: Block) {
-        this.grid = new FieldGrid(x_origin, y_origin, block.size);
+        this.grid = new FieldGrid(x_origin, y_origin, block);
         this.width = width;
         this.height = height;
         this.block = block;
@@ -93,11 +100,10 @@ class Field {
         this.blocks[b_block_id] = t;
     }
 
-    public readonly remove_from_columns = (hash_blocks: Iterable<number>):
-        {
-            shift_sub_columns: Array<{ start: number, end: number, offset: number }>,
-            new_colors: Uint32Array;
-        } => {
+    public readonly remove_from_columns = (hash_blocks: Iterable<number>): {
+        shift_sub_columns: Array<{ start: number, end: number, offset: number }>,
+        new_colors: Uint32Array;
+    } => {
         const sorted_blocks = this.sort_blocks(hash_blocks);
         const sub_cols = this.sub_columns(sorted_blocks);
         const col = sub_cols[0].x;
