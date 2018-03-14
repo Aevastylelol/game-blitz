@@ -1,5 +1,38 @@
 import { Block } from './block';
 
+class GridCell {
+    public readonly grid: FieldGrid;
+
+    private readonly cell: { x: number, y: number };
+    private readonly pos: { x: number, y: number };
+
+    constructor(grid: FieldGrid) {
+        this.grid = grid;
+        this.cell = { x: 0, y: 0 };
+        this.pos = { x: 0, y: 0 };
+    }
+
+    public readonly is_block = (): boolean => {
+        return (
+            (this.pos.x - (this.cell.x * this.grid.block.size + this.grid.x_origin)) <= (this.grid.block.size * this.grid.block.padding) &&
+            (this.pos.y - (this.cell.y * this.grid.block.size + this.grid.y_origin)) <= (this.grid.block.size * this.grid.block.padding)
+        )
+    }
+
+    public readonly set_position = (pos: { x: number, y: number }): this => {
+        this.pos.x = pos.x;
+        this.pos.y = pos.y;
+
+        this.cell.x = ((pos.x - this.grid.x_origin) / this.grid.block.size) | 0;
+        this.cell.y = ((pos.y - this.grid.y_origin) / this.grid.block.size) | 0;
+
+        return this;
+    }
+
+    public get x() { return this.cell.x };
+    public get y() { return this.cell.y };
+}
+
 class FieldGrid {
     public readonly x_origin: number;
     public readonly y_origin: number;
@@ -11,20 +44,8 @@ class FieldGrid {
         this.block = block;
     }
 
-    public readonly cell_from = (pos: { x: number, y: number }): Readonly<{ x: number, y: number }> => {
-        const cell = {
-            x: ((pos.x - this.x_origin) / this.block.size) | 0,
-            y: ((pos.y - this.y_origin) / this.block.size) | 0,
-        };
-
-        return cell;
-    }
-
-    public readonly is_block = (pos: { x: number, y: number }, cell: Readonly<{ x: number, y: number }>): boolean => {
-        return (
-            (pos.x - (cell.x * this.block.size + this.x_origin)) <= (this.block.size * this.block.padding) &&
-            (pos.y - (cell.y * this.block.size + this.y_origin)) <= (this.block.size * this.block.padding)
-        )
+    public readonly cell_from = (pos: { x: number, y: number }): GridCell => {
+        return new GridCell(this).set_position(pos);
     }
 }
 

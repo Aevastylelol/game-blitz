@@ -144,8 +144,7 @@ class Game {
     public readonly select = (pos: { x: number, y: number }) => {
         const cell = this.field.grid.cell_from(pos);
 
-
-        if (!this.field.grid.is_block(pos, cell) || !this.field.contains_block(cell.x, cell.y)) {
+        if (!cell.is_block() || !this.field.contains_block(cell.x, cell.y)) {
             return;
         }
 
@@ -158,7 +157,7 @@ class Game {
 
         const cell = this.field.grid.cell_from(pos);
 
-        if (!this.field.grid.is_block(pos, cell) || !this.field.contains_block(cell.x, cell.y)) {
+        if (!cell.is_block() || !this.field.contains_block(cell.x, cell.y)) {
             return;
         }
 
