@@ -142,29 +142,30 @@ class Game {
     }
 
     public readonly select = (pos: { x: number, y: number }) => {
-        const block = this.field.grid.block_from(pos);
+        const cell = this.field.grid.cell_from(pos);
 
-        if (!this.field.contains_block(block.x, block.y)) {
+
+        if (!this.field.grid.is_block(pos, cell) || !this.field.contains_block(cell.x, cell.y)) {
             return;
         }
 
-        this.set_selected_block(block);
-        this.thread.next(this.field_animation.select_block(block.x, block.y));
+        this.set_selected_block(cell);
+        this.thread.next(this.field_animation.select_block(cell.x, cell.y));
     }
 
     public readonly selected_swap_with = (pos: { x: number, y: number }) => {
         const series = new Series();
 
-        const block = this.field.grid.block_from(pos);
+        const cell = this.field.grid.cell_from(pos);
 
-        if (!this.field.contains_block(block.x, block.y)) {
+        if (!this.field.grid.is_block(pos, cell) || !this.field.contains_block(cell.x, cell.y)) {
             return;
         }
 
         const selected_block = this.take_selected_block();
 
-        const delta_x = selected_block.x - block.x;
-        const delta_y = selected_block.y - block.y;
+        const delta_x = selected_block.x - cell.x;
+        const delta_y = selected_block.y - cell.y;
 
         let swapped = false;
 
@@ -173,9 +174,9 @@ class Game {
             delta_y === 1 && delta_x === 0 || delta_y === -1 && delta_x === 0
         ) {
             if (delta_x !== 0) {
-                swapped = this.swap_x(selected_block, block, series);
+                swapped = this.swap_x(selected_block, cell, series);
             } else {
-                swapped = this.swap_y(selected_block, block, series);
+                swapped = this.swap_y(selected_block, cell, series);
             }
         }
 
@@ -184,8 +185,8 @@ class Game {
                 .with(this.balance())
                 .with(this.rebuild());
         } else {
-            this.set_selected_block(block);
-            series.with(this.field_animation.select_block(block.x, block.y));
+            this.set_selected_block(cell);
+            series.with(this.field_animation.select_block(cell.x, cell.y));
         }
 
         this.thread.next(series.run);
