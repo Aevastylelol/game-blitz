@@ -34,10 +34,10 @@ class App {
             .with_color(Color.from_u8(34, 153, 84, 1.0))
             .with_color(Color.from_u8(231, 76, 60, 1.0))
             .with_color(Color.from_u8(108, 52, 131, 1.0))
-            .with_swap_transition(150, 'linear')
+            .with_swap_transition(200, 'linear')
             .with_hide_transition(225, 'accelerated')
             .with_shift_transition(300, 'accelerated')
-            .with_select_transition(150, 'linear')
+            .with_select_transition(200, 'linear')
             .build();
 
         this.game = new GameBuilder()
