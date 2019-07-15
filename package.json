@@ -10,7 +10,7 @@
     "del": "^3.0.0",
     "fresh": "^0.5.2",
     "google-closure-compiler-js": "^20180204.0.0",
-    "gulp": "github:gulpjs/gulp#4.0",
+    "gulp": "^4.0.2",
     "gulp-imagemin": "^4.1.0",
     "gulp-pug": "^3.3.0",
     "gulp-rename": "^1.2.2",
